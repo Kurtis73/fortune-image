@@ -508,51 +508,38 @@
     }
 
     async function saveResultImage(){
-      const src = document.getElementById("resultCaptureArea");
-      const clone = src.cloneNode(true);
+      const buttons = document.querySelector(".result-actions");
+      const copyMsg = document.getElementById("copyMsg");
+      const smallText = document.querySelector(".small");
 
-      const btns = clone.querySelector(".result-actions");
-      const small = clone.querySelector(".small");
-      const copyMsg = clone.querySelector(".copy-ok");
-      if(btns) btns.remove();
-      if(small) small.remove();
-      if(copyMsg) copyMsg.remove();
+      const previousButtonDisplay = buttons.style.display;
+      const previousCopyDisplay = copyMsg.style.display;
+      const previousSmallDisplay = smallText.style.display;
 
-      const wrapper = document.createElement("div");
-      wrapper.style.position = "fixed";
-      wrapper.style.left = "-9999px";
-      wrapper.style.top = "0";
-      wrapper.style.width = "1080px";
-      wrapper.style.height = "1080px";
-      wrapper.style.background = "#ffffff";
-      wrapper.style.display = "flex";
-      wrapper.style.alignItems = "center";
-      wrapper.style.justifyContent = "center";
-      wrapper.style.padding = "60px";
-      wrapper.style.boxSizing = "border-box";
-
-      clone.style.width = "100%";
-      clone.style.minHeight = "auto";
-
-      wrapper.appendChild(clone);
-      document.body.appendChild(wrapper);
+      buttons.style.display = "none";
+      copyMsg.style.display = "none";
+      smallText.style.display = "none";
 
       try{
-        const canvas = await html2canvas(wrapper, {
-          backgroundColor: "#ffffff",
-          scale: 2
+        const canvas = await html2canvas(document.body, {
+          backgroundColor: null,
+          scale: 2,
+          useCORS: true
         });
 
         const link = document.createElement("a");
-        link.download = "dgist-fortune-instagram.png";
+        link.download = "dgist-fortune-screenshot.png";
         link.href = canvas.toDataURL("image/png");
         link.click();
 
-        document.getElementById("copyMsg").textContent = "인스타 비율 이미지가 저장됐어요.";
+        copyMsg.style.display = "block";
+        copyMsg.textContent = "화면 배경까지 포함한 이미지가 저장됐어요.";
       }catch(e){
-        document.getElementById("copyMsg").textContent = "이미지 저장이 제한될 수 있어요.";
+        copyMsg.style.display = "block";
+        copyMsg.textContent = "이미지 저장이 제한될 수 있어요.";
       }finally{
-        document.body.removeChild(wrapper);
+        buttons.style.display = previousButtonDisplay || "flex";
+        smallText.style.display = previousSmallDisplay || "block";
       }
     }
 
